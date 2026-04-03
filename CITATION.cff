@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+type: software
+authors:
+  - family-names: Tyriard
+    given-names: Camille
+  - family-names: Quintero
+    given-names: Ana
+  - family-names: Tornila
+    given-names: Dunia
+  - family-names: Huencho
+    given-names: Daniel
+  - family-names: Bell
+    given-names: Jonathan
+  - family-names: Tobo
+    given-names: Nicolas
+title: "QLoRA Fine-Tuning of Gemma-2 with SFT and GRPO"
+version: 1.0.0
+date-released: 2026-03-01
+url: "https://github.com/camilletyriard-dev/gemma2-qlora-sft-grpo"
+license: MIT

@@ -1,0 +1,16 @@
+{
+  "grpo_from_sft": {
+    "rewards": ["correctness", "format"],
+    "avg_correctness": null,
+    "avg_format": null,
+    "avg_total": null
+  },
+  "grpo_from_base": {
+    "rewards": ["correctness", "format", "style"],
+    "avg_correctness": null,
+    "avg_format": null,
+    "avg_style": null,
+    "avg_total": null
+  },
+  "notes": "Fill in after running notebooks/09_comparison_analysis.ipynb"
+}

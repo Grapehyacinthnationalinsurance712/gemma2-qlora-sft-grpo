@@ -1,0 +1,8 @@
+{
+  "task": "yoda_translation",
+  "model": "google/gemma-2-2b-it",
+  "adapter": "sft_yoda",
+  "final_train_loss": null,
+  "final_eval_loss": null,
+  "notes": "Fill in after running notebooks/02_sft_yoda_translation.ipynb"
+}

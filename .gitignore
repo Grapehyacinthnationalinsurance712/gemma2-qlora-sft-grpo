@@ -1,0 +1,30 @@
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Credentials — never commit
+.env
+*.key
+
+# Model weights — on Hugging Face
+checkpoints/
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.keras
+*.h5
+
+# W&B local logs
+wandb/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
