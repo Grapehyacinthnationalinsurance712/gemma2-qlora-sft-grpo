@@ -2,7 +2,6 @@
 
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.1+-orange.svg)](https://pytorch.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Weights-yellow)](https://huggingface.co/camilletyriard/gemma2-qlora-sft-grpo)
 
 Parameter-efficient fine-tuning of **`google/gemma-2-2b-it`** for two tasks:
@@ -286,10 +285,3 @@ Jonathan Bell, Nicolas Tobo.
   url    = {https://github.com/camilletyriard-dev/gemma2-qlora-sft-grpo}
 }
 ```
-
----
-
-## License
-
-[MIT License](LICENSE).
-Model weights inherit the [Gemma Terms of Use](https://ai.google.dev/gemma/terms).
